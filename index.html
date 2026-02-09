@@ -34,6 +34,9 @@
                     <li data-section="tasks">
                         <span class="icon">✅</span> Tasks
                     </li>
+                    <li data-section="exams">
+                        <span class="icon">📝</span> Exams
+                    </li>
                     <li data-section="analytics">
                         <span class="icon">📊</span> Analytics
                     </li>
@@ -117,6 +120,17 @@
                 </div>
             </section>
 
+            <!-- Exams Section -->
+            <section id="exams" class="hidden-section">
+                <header class="section-header">
+                    <h2>Exams & Tests</h2>
+                    <button class="btn btn-primary" id="add-exam-btn">+ Add Exam</button>
+                </header>
+                <div id="exams-list" class="card-grid">
+                    <!-- Exams injected here -->
+                </div>
+            </section>
+
             <!-- Analytics Section -->
             <section id="analytics" class="hidden-section">
                 <header class="section-header">
@@ -131,6 +145,7 @@
                         <h3>Task Completion</h3>
                         <div id="completion-chart" class="chart-placeholder"></div>
                     </div>
+
                 </div>
             </section>
 
@@ -240,6 +255,35 @@
                 <button type="submit" class="btn btn-primary">Save Session</button>
             </form>
         </div>
+
+        <!-- Add Exam Modal -->
+        <div id="exam-modal" class="modal hidden">
+            <div class="modal-header">
+                <h3>Add Exam</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="exam-form">
+                <div class="form-group">
+                    <label for="exam-title">Exam Title (e.g. Midterm)</label>
+                    <input type="text" id="exam-title" required>
+                </div>
+                <div class="form-group">
+                    <label for="exam-subject">Subject</label>
+                    <select id="exam-subject" required>
+                        <!-- Options populated dynamically -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="exam-date">Date</label>
+                    <input type="datetime-local" id="exam-date" required>
+                </div>
+                <div class="form-group">
+                    <label for="exam-topics">Topics / Syllabus</label>
+                    <textarea id="exam-topics" rows="3" placeholder="List topics to cover..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Save Exam</button>
+            </form>
+        </div>
     </div>
 
     <!-- Scripts -->
@@ -247,6 +291,7 @@
     <script src="js/subjects.js"></script>
     <script src="js/schedule.js"></script>
     <script src="js/tasks.js"></script>
+    <script src="js/exams.js"></script>
     <script src="js/analytics.js"></script>
     <script src="js/app.js"></script>
 </body>

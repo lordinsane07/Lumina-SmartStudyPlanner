@@ -3,6 +3,7 @@ const Storage = {
         SUBJECTS: 'ssp_subjects',
         TASKS: 'ssp_tasks',
         SCHEDULE: 'ssp_schedule',
+        EXAMS: 'ssp_exams',
         THEME: 'theme'
     },
 
@@ -15,6 +16,9 @@ const Storage = {
         }
         if (!localStorage.getItem(this.keys.SCHEDULE)) {
             localStorage.setItem(this.keys.SCHEDULE, JSON.stringify([]));
+        }
+        if (!localStorage.getItem(this.keys.EXAMS)) {
+            localStorage.setItem(this.keys.EXAMS, JSON.stringify([]));
         }
     },
 

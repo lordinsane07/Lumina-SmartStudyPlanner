@@ -125,5 +125,6 @@ const Analytics = {
                 </div>
             </div>
         `;
-    }
+    },
+
 };

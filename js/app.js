@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     Subjects.init();
     Tasks.init();
     Schedule.init();
+    Exams.init();
     Analytics.init();
 
     // --- Navigation Logic ---
@@ -32,6 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Refresh data for the section if needed
             if (targetId === 'dashboard') updateDashboard();
+            if (targetId === 'exams') renderExams();
             if (targetId === 'analytics') Analytics.render();
         });
     });
@@ -67,6 +69,12 @@ document.addEventListener('DOMContentLoaded', () => {
         openModal('session-modal');
     });
 
+    const openExamModal = () => {
+        Subjects.populateSelect('exam-subject');
+        openModal('exam-modal');
+    };
+    document.getElementById('add-exam-btn').addEventListener('click', openExamModal);
+
     // --- Global Theme Logic ---
     const themeToggle = document.getElementById('theme-toggle');
     const savedTheme = localStorage.getItem('theme') || 'light';
@@ -95,6 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Stats
         document.getElementById('stat-subjects').querySelector('.stat-value').textContent = Subjects.getCount();
         document.getElementById('stat-pending').querySelector('.stat-value').textContent = Tasks.getPendingCount();
+        document.getElementById('stat-exams').querySelector('.stat-value').textContent = Exams.getUpcomingCount();
 
         // Today's schedule preview (Mock for now, will implement properly)
         if (typeof Schedule !== 'undefined') Schedule.renderTodayPreview('dashboard-schedule-list');
@@ -229,4 +238,73 @@ document.addEventListener('DOMContentLoaded', () => {
             printWindow.close();
         }, 500);
     });
+
+    // --- Exams Logic ---
+    document.getElementById('exam-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const title = document.getElementById('exam-title').value;
+        const subjectId = document.getElementById('exam-subject').value;
+        const date = document.getElementById('exam-date').value;
+        const topics = document.getElementById('exam-topics').value;
+
+        Exams.add({
+            title,
+            subjectId,
+            date,
+            topics
+        });
+
+        closeModal();
+        e.target.reset();
+
+        // Refresh views
+        updateDashboard();
+        if (document.getElementById('exams').classList.contains('active-section')) {
+            renderExams();
+        }
+    });
+
+    function renderExams() {
+        const list = document.getElementById('exams-list');
+        const exams = Exams.getSortedExams();
+        const subjects = Subjects.getAll();
+
+        if (exams.length === 0) {
+            list.innerHTML = '<p class="empty-state">No exams scheduled. Time to relax! 😎</p>';
+            return;
+        }
+
+        list.innerHTML = exams.map(exam => {
+            const subject = subjects.find(s => s.id === exam.subjectId);
+            const color = subject ? subject.color : '#ccc';
+            const subjectName = subject ? subject.name : 'Unknown Subject';
+            const dateObj = new Date(exam.date);
+
+            // Use a tinted background like schedule items
+            const bgTint = color + '20'; // 20 hex = ~12% opacity, 30 hex = ~19%
+
+            return `
+                <div class="card" style="background-color: ${bgTint}; border-left: 5px solid ${color}; padding: 1.5rem; border-radius: 10px; box-shadow: 2px 2px 0 rgba(0,0,0,0.1); margin-bottom: 1rem; position: relative; border: 1px solid var(--border-color); border-left-width: 5px;">
+                    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding-bottom: 5px; border-bottom: 1px dashed ${color};">
+                        <span class="badge" style="background-color: ${color}; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.8em; font-weight: bold;">${subjectName}</span>
+                        <span class="date" style="font-size: 0.9em; font-family: 'Patrick Hand', cursive;">${dateObj.toLocaleDateString()} ${dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                    </div>
+                    <h3 style="margin: 0 0 10px 0; font-family: 'Permanent Marker', cursive; color: var(--text-primary);">${exam.title}</h3>
+                    <p style="white-space: pre-wrap; margin-bottom: 15px; font-size: 0.95em; color: var(--text-primary); font-family: 'Patrick Hand', cursive;">${exam.topics || 'No topics specified.'}</p>
+                    <div style="text-align: right;">
+                        <button class="btn-sm btn-danger" onclick="deleteExam('${exam.id}')" style="padding: 4px 10px; border-radius: 5px; border: 1px solid var(--border-color); cursor: pointer; background-color: #ff7675; color: white; font-family: 'Patrick Hand', cursive;">Delete</button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // Expose delete function globally so onclick works
+    window.deleteExam = (id) => {
+        if (confirm('Delete this exam?')) {
+            Exams.delete(id);
+            renderExams();
+            updateDashboard();
+        }
+    };
 });

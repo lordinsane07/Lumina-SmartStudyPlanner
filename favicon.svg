@@ -1,0 +1,5 @@
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <rect x="10" y="38" width="44" height="12" rx="2" fill="#ff6b6b"/> <!-- Red Book -->
+  <rect x="10" y="24" width="44" height="12" rx="2" fill="#54a0ff"/> <!-- Blue Book -->
+  <rect x="10" y="10" width="44" height="12" rx="2" fill="#1dd1a1"/> <!-- Green Book -->
+</svg>

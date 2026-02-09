@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Study Planner</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Permanent+Marker&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="logo">
+                <h1>StudySmart</h1>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li class="active" data-section="dashboard">
+                        <span class="icon">🏠</span> Dashboard
+                    </li>
+                    <li data-section="subjects">
+                        <span class="icon">📚</span> Subjects
+                    </li>
+                    <li data-section="schedule">
+                        <span class="icon">📅</span> Schedule
+                    </li>
+                    <li data-section="tasks">
+                        <span class="icon">✅</span> Tasks
+                    </li>
+                    <li data-section="analytics">
+                        <span class="icon">📊</span> Analytics
+                    </li>
+                    <li data-section="settings">
+                        <span class="icon">⚙️</span> Settings
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="active-section">
+                <header class="section-header">
+                    <h2>Dashboard</h2>
+                    <p id="current-date"></p>
+                </header>
+                <div class="dashboard-grid">
+                    <div class="stat-card" id="stat-subjects">
+                        <h3>Total Subjects</h3>
+                        <p class="stat-value">0</p>
+                    </div>
+                    <div class="stat-card" id="stat-pending">
+                        <h3>Pending Tasks</h3>
+                        <p class="stat-value">0</p>
+                    </div>
+                    <div class="stat-card" id="stat-exams">
+                        <h3>Upcoming Exams</h3>
+                        <p class="stat-value">0</p>
+                    </div>
+                    <!-- Today's Schedule Preview -->
+                    <div class="dashboard-card full-width">
+                        <h3>Today's Schedule</h3>
+                        <div id="dashboard-schedule-list" class="empty-state">No study sessions scheduled for today.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Subjects Section -->
+            <section id="subjects" class="hidden-section">
+                <header class="section-header">
+                    <h2>Subjects</h2>
+                    <button class="btn btn-primary" id="add-subject-btn">+ Add Subject</button>
+                </header>
+                <div id="subjects-list" class="card-grid">
+                    <!-- Subjects injected here -->
+                </div>
+            </section>
+
+            <!-- Schedule Section -->
+            <section id="schedule" class="hidden-section">
+                <header class="section-header">
+                    <h2>Schedule Planner</h2>
+                    <div class="schedule-controls">
+                        <button class="btn btn-secondary" id="prev-day">&lt;</button>
+                        <span id="schedule-date-display">Today</span>
+                        <button class="btn btn-secondary" id="next-day">&gt;</button>
+                    </div>
+                    <button class="btn btn-primary" id="add-session-btn">+ Add Session</button>
+                </header>
+                <div class="schedule-view" id="daily-schedule">
+                    <!-- Time slots injected here -->
+                </div>
+            </section>
+
+            <!-- Tasks Section -->
+            <section id="tasks" class="hidden-section">
+                <header class="section-header">
+                    <h2>Task Manager</h2>
+                    <button class="btn btn-primary" id="add-task-btn">+ Add Task</button>
+                </header>
+                <div class="task-filters">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="pending">Pending</button>
+                    <button class="filter-btn" data-filter="completed">Completed</button>
+                    <button class="filter-btn" data-filter="overdue">Overdue</button>
+                </div>
+                <div id="tasks-list" class="task-list">
+                    <!-- Tasks injected here -->
+                </div>
+            </section>
+
+            <!-- Analytics Section -->
+            <section id="analytics" class="hidden-section">
+                <header class="section-header">
+                    <h2>Progress Analytics</h2>
+                </header>
+                <div class="analytics-grid">
+                    <div class="chart-container">
+                        <h3>Study Time (Weekly)</h3>
+                        <div id="time-chart" class="chart-placeholder"></div>
+                    </div>
+                    <div class="chart-container">
+                        <h3>Task Completion</h3>
+                        <div id="completion-chart" class="chart-placeholder"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings Section -->
+            <section id="settings" class="hidden-section">
+                <header class="section-header">
+                    <h2>Settings</h2>
+                </header>
+                <div class="settings-container">
+                    <div class="setting-item">
+                        <label>Dark Mode</label>
+                        <label class="switch">
+                            <input type="checkbox" id="theme-toggle">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="setting-actions">
+                        <button class="btn btn-secondary" id="export-data-btn">Export as PDF</button>
+                        <button class="btn btn-danger" id="reset-data-btn">Reset All Data</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="modal-overlay" class="modal-overlay hidden">
+        <!-- Add Subject Modal -->
+        <div id="subject-modal" class="modal hidden">
+            <div class="modal-header">
+                <h3>Add Subject</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="subject-form">
+                <div class="form-group">
+                    <label for="sub-name">Subject Name</label>
+                    <input type="text" id="sub-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="sub-color">Color Code</label>
+                    <input type="color" id="sub-color" value="#4CAF50">
+                </div>
+                <button type="submit" class="btn btn-primary">Save Subject</button>
+            </form>
+        </div>
+
+        <!-- Add Task Modal -->
+        <div id="task-modal" class="modal hidden">
+            <div class="modal-header">
+                <h3>Add Task</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="task-form">
+                <div class="form-group">
+                    <label for="task-title">Title</label>
+                    <input type="text" id="task-title" required>
+                </div>
+                <div class="form-group">
+                    <label for="task-subject">Subject</label>
+                    <select id="task-subject" required>
+                        <!-- Options populated dynamically -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="task-due">Due Date</label>
+                    <input type="datetime-local" id="task-due" required>
+                </div>
+                <div class="form-group">
+                    <label for="task-priority">Priority</label>
+                    <select id="task-priority">
+                        <option value="low">Low</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Save Task</button>
+            </form>
+        </div>
+
+        <!-- Add Session Modal -->
+        <div id="session-modal" class="modal hidden">
+            <div class="modal-header">
+                <h3>Add Study Session</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="session-form">
+                <div class="form-group">
+                    <label for="sess-subject">Subject</label>
+                    <select id="sess-subject" required>
+                        <!-- Options populated dynamically -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="sess-date">Date</label>
+                    <input type="date" id="sess-date" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="sess-start">Start Time</label>
+                        <input type="time" id="sess-start" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="sess-end">End Time</label>
+                        <input type="time" id="sess-end" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Save Session</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/storage.js"></script>
+    <script src="js/subjects.js"></script>
+    <script src="js/schedule.js"></script>
+    <script src="js/tasks.js"></script>
+    <script src="js/analytics.js"></script>
+    <script src="js/app.js"></script>
+</body>
+
+</html>
